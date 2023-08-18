@@ -28,6 +28,16 @@ configure_docker_storage() {
     printf "%s: %s\n" "$(date +"%T.%N")" "Configured docker storage to use mountpoint"
 }
 
+configure_containerd_storage() {
+    printf "%s: %s\n" "$(date +"%T.%N")" "Configuring containerd storage"
+    sudo mkdir /mydata/containerd
+    echo -e '{
+        "root = "/mydata/containerd"
+    }' | sudo tee /etc/containerd/config.toml
+    sudo systemctl restart containerd || (echo "ERROR: Containerd installation failed, exiting." && exit -1)
+    printf "%s: %s\n" "$(date +"%T.%N")" "Configured containerd storage to use mountpoint"
+}
+
 disable_swap() {
     # Turn swap off and comment out swap line in /etc/fstab
     sudo swapoff -a
@@ -296,6 +306,7 @@ disable_swap
 # Use mountpoint (if it exists) to set up additional docker image storage
 if test -d "/mydata"; then
     configure_docker_storage
+    configure_containerd_storage
 fi
 
 # All all users to the docker group
