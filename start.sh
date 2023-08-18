@@ -31,9 +31,7 @@ configure_docker_storage() {
 configure_containerd_storage() {
     printf "%s: %s\n" "$(date +"%T.%N")" "Configuring containerd storage"
     sudo mkdir /mydata/containerd
-    echo -e '{
-        "root = "/mydata/containerd"
-    }' | sudo tee /etc/containerd/config.toml
+    echo -e 'root = "/mydata/containerd"' | sudo tee -a /etc/containerd/config.toml
     sudo systemctl restart containerd || (echo "ERROR: Containerd installation failed, exiting." && exit -1)
     printf "%s: %s\n" "$(date +"%T.%N")" "Configured containerd storage to use mountpoint"
 }
