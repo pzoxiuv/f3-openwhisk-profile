@@ -21,6 +21,8 @@ sudo apt install -y nodejs npm default-jre default-jdk
 # In order to use wskdev commands, need to run this:
 sudo apt install -y python
 
+sudo apt install -y vim git screen python3 ansible
+
 # Pip is useful
 sudo apt install -y python3-pip
 python3 -m pip install --upgrade pip
@@ -80,3 +82,16 @@ git clone https://github.com/apache/openwhisk-deploy-kube $INSTALL_DIR/openwhisk
 sudo chgrp -R $OW_USER_GROUP $INSTALL_DIR
 sudo chmod -R o+rw $INSTALL_DIR
 
+wget https://go.dev/dl/go1.18.3.linux-amd64.tar.gz
+sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.18.3.linux-amd64.tar.gz
+echo "alias kc=kubecolor" | tee -a .bashrc
+echo "export PATH=$PATH:/usr/local/go/bin:/users/amerenst/go/bin" | tee -a .bashrc
+
+export PATH=$PATH:/usr/local/go/bin:/users/amerenst/go/bin
+go install github.com/hidetatz/kubecolor/cmd/kubecolor@HEAD
+#printf "ow[1:3]\n[workers]\now[2:3]" | sudo tee -a /etc/ansible/hosts
+
+echo "if [ -n \$MYPID ] && [ "\$TERM" != "dumb" ] && [ -z "\$STY" ]; then screen -dRRS \$MYPID; fi" | tee -a ~/.bashrc
+printf "Host ow*\n\tIdentityFile /users/amerenst/cl_id_rsa\n" | tee -a ~/.ssh/config
+echo "AcceptEnv MYPID" | sudo tee -a /etc/ssh/sshd_config
+sudo service sshd restart
